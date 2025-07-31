@@ -24,13 +24,15 @@ const title: [:0]const u8 = "Title";
 
 const ButtonCallBack = *const fn() void;
 const ButtonManager = btn_components.ButtonManager;
+const ButtonVisual = btn_components.ButtonVisual;
+const ButtonBehaviour = btn_components.ButtonBehaviour;
 const MainMenuState = menu_actions.MainMenuState;
 const setCallBack = menu_actions.setCallBack;
 
 pub var main_menu = ButtonManager{};
 pub var should_quit = false;
 
-const main_menu_labels = [_][:0]const u8{
+const labels = [_][:0]const u8{
     "Start",
     "Load",
     "Setting",
@@ -39,21 +41,38 @@ const main_menu_labels = [_][:0]const u8{
     "Quit",
 };
 
+const visuals = blk: {
+    var temp: [labels.len]ButtonVisual = undefined;
+
+    for (0..labels.len) |i| {
+        temp[i] = ButtonVisual{
+            .label = labels[i],
+            .x_position = text_x_pos,
+            .y_position = text_y_pos[i],
+            .x_padding = text_x_padding,
+            .y_padding = text_y_padding,
+            .font_size = text_font_size,
+        };
+    }
+
+    break :blk temp;
+};
+
 // Start and quit do not need a MainMenuState. Start should transition to the Gameplay
 // and Quit should exit the program.
-const main_menu_behaviours = [_]?ButtonCallBack{
-    menu_actions.start,
-    setCallBack(MainMenuState.Load, menu_actions.load),
-    setCallBack(MainMenuState.Setting, menu_actions.settings),
-    setCallBack(MainMenuState.About, menu_actions.about),
-    setCallBack(MainMenuState.Help, menu_actions.help),
-    menu_actions.quit,
+const behaviours = [labels.len]ButtonBehaviour{
+    ButtonBehaviour{ .callback = menu_actions.start },
+    ButtonBehaviour{ .callback = setCallBack(MainMenuState.Load, menu_actions.load) },
+    ButtonBehaviour{ .callback = setCallBack(MainMenuState.Setting, menu_actions.settings) },
+    ButtonBehaviour{ .callback = setCallBack(MainMenuState.About, menu_actions.about) },
+    ButtonBehaviour{ .callback = setCallBack(MainMenuState.Help, menu_actions.help) },
+    ButtonBehaviour{ .callback = menu_actions.quit },
 };
 
 pub fn init(allocator: std.mem.Allocator) void {
     main_menu.init(allocator);
     game_state.init(allocator);
-    setUpButtons();
+    btn_system.setUpButtons(&main_menu, &visuals, &behaviours, rl.Color.black) catch unreachable;
 }
 
 pub fn deinit() void {
@@ -74,19 +93,4 @@ pub fn updateMainMenu(menu: *ButtonManager) void {
 pub fn drawSidePanel() void {
     rl.drawRectangle(0, 0, side_panel_width, side_panel_height, rl.Color.sky_blue);
     rl.drawText(title, title_x_pos, title_y_pos, title_font_size, rl.Color.black);
-}
-
-fn setUpButtons() void {
-    for (0..main_menu_labels.len) |i| {
-        btn_system.createButton(
-            &main_menu,
-            main_menu_labels[i],
-            text_x_pos,
-            text_y_pos[i],
-            text_x_padding,
-            text_y_padding,
-            text_font_size,
-            main_menu_behaviours[i]
-        ) catch unreachable;
-    }
 }

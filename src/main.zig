@@ -43,7 +43,8 @@ pub fn main() !void {
                 scene_manager.renderScene();
                 scene_manager.updateScene();
             },
-            else => {},
+            GameState.PauseMenu => {},
+            GameState.None => {},
         }
     }
 }

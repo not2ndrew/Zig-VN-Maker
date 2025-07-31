@@ -36,9 +36,7 @@ pub fn start() void {
 
 pub fn load() void {}
 
-pub fn settings() void {
-    // draw settings
-}
+pub fn settings() void {}
 
 pub fn about() void {
     const description: [:0]const u8 = "Zig VN Maker is made using Zig and Not Nik Raylib";

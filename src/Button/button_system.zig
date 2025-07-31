@@ -8,15 +8,19 @@ const ButtonVisual = btn_components.ButtonVisual;
 const ButtonInteractive = btn_components.ButtonInteractive;
 const ButtonBehaviour = btn_components.ButtonBehaviour;
 
-const ArrayList = std.ArrayList;
-
 pub fn updateFrame(self: *ButtonManager) void {
-    renderButton(&self.visuals);
+    renderButton(&self.visuals, &self.text_colours);
     updateButtonInteraction(&self.visuals, &self.interactives);
     updateButtonBehaviour(&self.interactives, &self.behaviours);
 }
 
-pub fn updateButtonInteraction(visuals: *ArrayList(ButtonVisual), interactives: *ArrayList(ButtonInteractive)) void {
+pub fn renderButton(visuals: *std.ArrayList(ButtonVisual), text_colours: *std.ArrayList(rl.Color)) void {
+    for (visuals.items, text_colours.items) |visual, text_colour| {
+        drawButton(visual, text_colour);
+    }
+}
+
+pub fn updateButtonInteraction(visuals: *std.ArrayList(ButtonVisual), interactives: *std.ArrayList(ButtonInteractive)) void {
     const mousePos = rl.getMousePosition();
     const num_of_btns = visuals.items.len;
 
@@ -42,7 +46,7 @@ pub fn updateButtonInteraction(visuals: *ArrayList(ButtonVisual), interactives: 
     }
 }
 
-pub fn updateButtonBehaviour(interactives: *ArrayList(ButtonInteractive), behaviours: *ArrayList(ButtonBehaviour)) void {
+pub fn updateButtonBehaviour(interactives: *std.ArrayList(ButtonInteractive), behaviours: *std.ArrayList(ButtonBehaviour)) void {
     const num_of_btns = interactives.items.len;
     for (0..num_of_btns) |i| {
         if (interactives.items[i].clicked) {
@@ -53,14 +57,7 @@ pub fn updateButtonBehaviour(interactives: *ArrayList(ButtonInteractive), behavi
     }
 }
 
-pub fn renderButton(visuals: *ArrayList(ButtonVisual)) void {
-    const num_of_btns = visuals.items.len;
-    for (0..num_of_btns) |i| {
-        drawButton(visuals.items[i]);
-    }
-}
-
-pub fn drawButton(visual: ButtonVisual) void {
+pub fn drawButton(visual: ButtonVisual, text_colour: rl.Color) void {
     const rect = calcRect(visual);
     rl.drawRectangle(
         @intFromFloat(rect.x),
@@ -80,30 +77,25 @@ pub fn drawButton(visual: ButtonVisual) void {
     const text_x_pos = rect_x + @divFloor(rect_width - text_width, 2);
     const text_y_pos = rect_y + @divFloor(rect_height - text_height, 2);
 
-    rl.drawText(visual.label, text_x_pos, text_y_pos, visual.font_size, rl.Color.black);
-
+    rl.drawText(visual.label, text_x_pos, text_y_pos, visual.font_size, text_colour);
 }
 
-pub fn createButton(self: *ButtonManager, label: [:0]const u8, posX: i32, posY: i32, paddingX: i32, paddingY: i32, font_size: i32, callback: ?ButtonCallBack) !void {
-    const visual = ButtonVisual{
-        .label = label,
-        .x_position = posX,
-        .y_position = posY,
-        .x_padding = paddingX,
-        .y_padding = paddingY,
-        .font_size = font_size,
-    };
+pub fn setUpButtons(btnManager: *ButtonManager, visuals: []const ButtonVisual, behaviours: []const ButtonBehaviour, text_colour: rl.Color) !void {
+    for (visuals, behaviours) |visual, behaviour| {
+        try createButton(btnManager, visual, behaviour, text_colour);
+    }
+}
 
+pub fn createButton(self: *ButtonManager, visual: ButtonVisual, behaviour: ButtonBehaviour, text_colour: rl.Color) !void {
     const interactive = ButtonInteractive{
         .hovered = false,
         .clicked = false,
     };
 
-    const behaviour = ButtonBehaviour{ .callback = callback };
-
     try self.visuals.append(visual);
     try self.interactives.append(interactive);
     try self.behaviours.append(behaviour);
+    try self.text_colours.append(text_colour);
 }
 
 fn calcRect(visual: ButtonVisual) rl.Rectangle {

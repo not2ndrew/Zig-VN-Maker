@@ -72,6 +72,8 @@ pub fn build(b: *std.Build) void {
     scene.addImport("game_state", game_state);
     scene.addImport("main_menu_actions", main_menu_actions);
 
+    button_components.addImport("raylib", raylib);
+
     button_system.addImport("raylib", raylib);
     button_system.addImport("button_components", button_components);
 

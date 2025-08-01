@@ -23,6 +23,10 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/Button/button_system.zig"),
     });
 
+    const menu_options = b.createModule(.{
+        .root_source_file = b.path("src/Menu/menu_options.zig"),
+    });
+
     const drawText = b.createModule(.{
         .root_source_file = b.path("src/UI/drawText.zig"),
     });
@@ -37,6 +41,14 @@ pub fn build(b: *std.Build) void {
 
     const main_menu_actions = b.createModule(.{
         .root_source_file = b.path("src/Menu/main_menu_actions.zig"),
+    });
+
+    const pause_menu = b.createModule(.{
+        .root_source_file = b.path("src/SetUp/pause_menu.zig"),
+    });
+
+    const pause_behaviour = b.createModule(.{
+        .root_source_file = b.path("src/Menu/pause_behaviour.zig"),
     });
 
     const story = b.createModule(.{
@@ -69,6 +81,7 @@ pub fn build(b: *std.Build) void {
     scene.addImport("raylib", raylib);
     scene.addImport("constants", constants);
     scene.addImport("main_menu", main_menu);
+    scene.addImport("menu_options", menu_options);
     scene.addImport("game_state", game_state);
     scene.addImport("main_menu_actions", main_menu_actions);
 
@@ -77,19 +90,38 @@ pub fn build(b: *std.Build) void {
     button_system.addImport("raylib", raylib);
     button_system.addImport("button_components", button_components);
 
+    menu_options.addImport("raylib", raylib);
+    menu_options.addImport("constants", constants);
+    menu_options.addImport("main_menu", main_menu);
+    menu_options.addImport("main_menu_actions", main_menu_actions);
+    menu_options.addImport("game_state", game_state);
+
     main_menu.addImport("raylib", raylib);
     main_menu.addImport("constants", constants);
     main_menu.addImport("button_system", button_system);
     main_menu.addImport("button_components", button_components);
+    main_menu.addImport("menu_options", menu_options);
     main_menu.addImport("main_menu_actions", main_menu_actions);
     main_menu.addImport("game_state", game_state);
 
     main_menu_actions.addImport("raylib", raylib);
+    main_menu_actions.addImport("menu_options", menu_options);
     main_menu_actions.addImport("main_menu", main_menu);
     main_menu_actions.addImport("constants", constants);
     main_menu_actions.addImport("scene", scene);
     main_menu_actions.addImport("story", story);
     main_menu_actions.addImport("game_state", game_state);
+
+    pause_menu.addImport("raylib", raylib);
+    pause_menu.addImport("contants", constants);
+    pause_menu.addImport("button_system", button_system);
+    pause_menu.addImport("button_components", button_components);
+    pause_menu.addImport("game_state", game_state);
+    pause_menu.addImport("pause_behaviour", pause_behaviour);
+
+    pause_behaviour.addImport("raylib", raylib);
+    pause_behaviour.addImport("constants", constants);
+    pause_behaviour.addImport("game_state", game_state);
 
     story.addImport("scene", scene);
 

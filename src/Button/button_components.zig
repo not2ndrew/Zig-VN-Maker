@@ -38,6 +38,4 @@ pub const ButtonInteractive = struct {
     clicked: bool,
 };
 
-pub const ButtonBehaviour = struct {
-    callback: ?ButtonCallBack,
-};
+pub const ButtonBehaviour = ?*const fn() void;

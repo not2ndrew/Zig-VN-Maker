@@ -39,16 +39,16 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/SetUp/main_menu.zig"),
     });
 
-    const main_menu_actions = b.createModule(.{
-        .root_source_file = b.path("src/Menu/main_menu_actions.zig"),
-    });
-
     const pause_menu = b.createModule(.{
         .root_source_file = b.path("src/SetUp/pause_menu.zig"),
     });
 
     const pause_behaviour = b.createModule(.{
         .root_source_file = b.path("src/Menu/pause_behaviour.zig"),
+    });
+
+    const command_menu = b.createModule(.{
+        .root_source_file = b.path("src/SetUp/command_menu.zig"),
     });
 
     const story = b.createModule(.{
@@ -83,8 +83,7 @@ pub fn build(b: *std.Build) void {
     scene.addImport("main_menu", main_menu);
     scene.addImport("menu_options", menu_options);
     scene.addImport("game_state", game_state);
-    scene.addImport("main_menu_actions", main_menu_actions);
-
+    
     button_components.addImport("raylib", raylib);
 
     button_system.addImport("raylib", raylib);
@@ -93,7 +92,6 @@ pub fn build(b: *std.Build) void {
     menu_options.addImport("raylib", raylib);
     menu_options.addImport("constants", constants);
     menu_options.addImport("main_menu", main_menu);
-    menu_options.addImport("main_menu_actions", main_menu_actions);
     menu_options.addImport("game_state", game_state);
 
     main_menu.addImport("raylib", raylib);
@@ -101,16 +99,7 @@ pub fn build(b: *std.Build) void {
     main_menu.addImport("button_system", button_system);
     main_menu.addImport("button_components", button_components);
     main_menu.addImport("menu_options", menu_options);
-    main_menu.addImport("main_menu_actions", main_menu_actions);
     main_menu.addImport("game_state", game_state);
-
-    main_menu_actions.addImport("raylib", raylib);
-    main_menu_actions.addImport("menu_options", menu_options);
-    main_menu_actions.addImport("main_menu", main_menu);
-    main_menu_actions.addImport("constants", constants);
-    main_menu_actions.addImport("scene", scene);
-    main_menu_actions.addImport("story", story);
-    main_menu_actions.addImport("game_state", game_state);
 
     pause_menu.addImport("raylib", raylib);
     pause_menu.addImport("contants", constants);
@@ -122,6 +111,8 @@ pub fn build(b: *std.Build) void {
     pause_behaviour.addImport("raylib", raylib);
     pause_behaviour.addImport("constants", constants);
     pause_behaviour.addImport("game_state", game_state);
+
+    command_menu.addImport("raylib", raylib);
 
     story.addImport("scene", scene);
 

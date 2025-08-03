@@ -50,7 +50,7 @@ pub fn updateButtonBehaviour(interactives: *std.ArrayList(ButtonInteractive), be
     const num_of_btns = interactives.items.len;
     for (0..num_of_btns) |i| {
         if (interactives.items[i].clicked) {
-            if (behaviours.items[i].callback) |cb| {
+            if (behaviours.items[i]) |cb| {
                 cb();
             }
         }

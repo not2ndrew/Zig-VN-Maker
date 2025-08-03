@@ -52,12 +52,12 @@ const visuals = blk: {
 };
 
 const behaviours = [labels.len]ButtonBehaviour{
-    ButtonBehaviour{ .callback = pause_behaviour.save },
-    ButtonBehaviour{ .callback = setCallBack(PauseMenuState.Load, pause_behaviour.load) },
-    ButtonBehaviour{ .callback = setCallBack(PauseMenuState.History, pause_behaviour.history) },
-    ButtonBehaviour{ .callback = setCallBack(PauseMenuState.Setting, pause_behaviour.settings) },
-    ButtonBehaviour{ .callback = pause_behaviour.resumeGameplay },
-    ButtonBehaviour{ .callback = pause_behaviour.quit },
+    pause_behaviour.save,
+    setCallBack(PauseMenuState.Load, pause_behaviour.load),
+    setCallBack(PauseMenuState.History, pause_behaviour.history),
+    setCallBack(PauseMenuState.Setting, pause_behaviour.settings),
+    pause_behaviour.resumeGameplay,
+    pause_behaviour.quit,
 };
 
 pub var pause_menu = ButtonManager{};

@@ -1,7 +1,6 @@
 const rl = @import("raylib");
 const c = @import("constants");
 const main_menu = @import("main_menu");
-const main_actions = @import("main_menu_actions");
 const game_state = @import("game_state");
 
 const title_font_size = c.TITLE_FONT_SIZE;
@@ -31,7 +30,7 @@ pub const MenuState = enum {
 
 // Main Menu Options only
 pub fn startGame() void {
-    main_actions.current_state = MenuState.None;
+    main_menu.current_state = MenuState.None;
     game_state.pushState(GameState.Gameplay);
 }
 
@@ -43,6 +42,11 @@ pub fn about() void {
 }
 
 pub fn help() void {}
+
+
+// Gameplay only
+pub fn auto() void {}
+pub fn skip() void {}
 
 
 // Gameplay and Pause Menu Options only

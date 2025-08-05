@@ -5,6 +5,8 @@ const scene = @import("scene");
 const main_menu = @import("main_menu");
 const story = @import("story");
 const game_state = @import("game_state");
+const command_menu = @import("command_menu");
+const pause_menu = @import("pause_menu");
 
 const screen_width = c.SCREEN_WIDTH;
 const screen_height = c.SCREEN_HEIGHT;
@@ -26,6 +28,12 @@ pub fn main() !void {
     main_menu.init(allocator);
     defer main_menu.deinit();
 
+    pause_menu.init(allocator);
+    defer pause_menu.deinit();
+
+    command_menu.init(allocator);
+    defer command_menu.deinit();
+
     rl.setTargetFPS(60);
     while (!rl.windowShouldClose() and !main_menu.should_quit) {
         rl.beginDrawing();
@@ -42,8 +50,12 @@ pub fn main() !void {
             GameState.Gameplay => {
                 scene_manager.renderScene();
                 scene_manager.updateScene();
+                command_menu.updateCommandMenu();
             },
-            GameState.PauseMenu => {},
+            GameState.PauseMenu => {
+                pause_menu.drawPauseMenu();
+                pause_menu.updatePauseMenu();
+            },
             GameState.None => {},
         }
     }

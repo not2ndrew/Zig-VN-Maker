@@ -43,10 +43,6 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/SetUp/pause_menu.zig"),
     });
 
-    const pause_behaviour = b.createModule(.{
-        .root_source_file = b.path("src/Menu/pause_behaviour.zig"),
-    });
-
     const command_menu = b.createModule(.{
         .root_source_file = b.path("src/SetUp/command_menu.zig"),
     });
@@ -102,17 +98,19 @@ pub fn build(b: *std.Build) void {
     main_menu.addImport("game_state", game_state);
 
     pause_menu.addImport("raylib", raylib);
-    pause_menu.addImport("contants", constants);
+    pause_menu.addImport("constants", constants);
     pause_menu.addImport("button_system", button_system);
     pause_menu.addImport("button_components", button_components);
+    pause_menu.addImport("menu_options", menu_options);
     pause_menu.addImport("game_state", game_state);
-    pause_menu.addImport("pause_behaviour", pause_behaviour);
-
-    pause_behaviour.addImport("raylib", raylib);
-    pause_behaviour.addImport("constants", constants);
-    pause_behaviour.addImport("game_state", game_state);
 
     command_menu.addImport("raylib", raylib);
+    command_menu.addImport("constants", constants);
+    command_menu.addImport("button_system", button_system);
+    command_menu.addImport("button_components", button_components);
+    command_menu.addImport("menu_options", menu_options);
+    command_menu.addImport("game_state", game_state);
+    command_menu.addImport("pause_menu", pause_menu);
 
     story.addImport("scene", scene);
 
@@ -124,6 +122,8 @@ pub fn build(b: *std.Build) void {
     exe.root_module.addImport("main_menu", main_menu);
     exe.root_module.addImport("story", story);
     exe.root_module.addImport("game_state", game_state);
+    exe.root_module.addImport("command_menu", command_menu);
+    exe.root_module.addImport("pause_menu", pause_menu);
 
     b.installArtifact(exe);
 

@@ -1,7 +1,6 @@
 const std = @import("std");
 const rl = @import("raylib");
 const c = @import("constants");
-const menu_options = @import("menu_options");
 const main_menu = @import("main_menu");
 const game_state = @import("game_state");
 
@@ -45,7 +44,7 @@ pub const SceneManager = struct {
     }
 
     pub fn resetScenes(self: *SceneManager) void {
-        main_menu.current_state = menu_options.MenuState.MainMenu;
+        main_menu.current_state = main_menu.MainMenuState.MainMenu;
         self.current_scene = 0;
         self.resetAllSceneLines();
         game_state.popState();

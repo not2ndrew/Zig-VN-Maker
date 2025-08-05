@@ -14,23 +14,10 @@ const panel_x = left_panel_width + c.PADDING_X;
 
 const GameState = game_state.GameState;
 
-pub const MenuState = enum {
-    Start,
-    Quit,
-    About,
-    Save,
-    MainMenu,
-    ResumeGame,
-    Setting,
-    Load,
-    Help,
-    None,
-};
-
 
 // Main Menu Options only
 pub fn startGame() void {
-    main_menu.current_state = MenuState.None;
+    main_menu.current_state = main_menu.MainMenuState.None;
     game_state.pushState(GameState.Gameplay);
 }
 
@@ -47,12 +34,20 @@ pub fn help() void {}
 // Gameplay only
 pub fn auto() void {}
 pub fn skip() void {}
+pub fn previousScene() void {}
 
 
 // Gameplay and Pause Menu Options only
-pub fn save() void {}
-pub fn menu() void {}
+pub fn saveGame() void {}
+pub fn menu() void {
+    while (game_state.state_stack.getLast() != GameState.MainMenu) {
+        game_state.popState();
+    }
+
+    main_menu.current_state = main_menu.MainMenuState.MainMenu;
+}
 pub fn resumeGame() void { game_state.popState(); }
+pub fn history() void {}
 
 
 // Main Menu, Gameplay, and Pause Menu

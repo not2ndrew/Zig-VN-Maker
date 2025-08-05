@@ -26,17 +26,26 @@ const title_y_pos = 200;
 
 const title: [:0]const u8 = "Title";
 
-const ButtonCallBack = *const fn() void;
 const ButtonManager = btn_components.ButtonManager;
 const ButtonVisual = btn_components.ButtonVisual;
 const ButtonBehaviour = btn_components.ButtonBehaviour;
-const MenuState = menu_options.MenuState;
 
 pub var main_menu = ButtonManager{};
 pub var should_quit = false;
 
-pub var current_state = MenuState.MainMenu;
+pub var current_state = MainMenuState.MainMenu;
 pub var current_action: ?*const fn () void = null;
+
+pub const MainMenuState = enum {
+    Start,
+    Quit,
+    About,
+    Setting,
+    Load,
+    Help,
+    MainMenu,
+    None,
+};
 
 const labels = [_][:0]const u8{
     "Start",
@@ -68,14 +77,14 @@ const visuals = blk: {
 // and Quit should exit the program.
 const behaviours = [labels.len]ButtonBehaviour{
     menu_options.startGame,
-    setCallBack(MenuState.Load, menu_options.loadGame),
-    setCallBack(MenuState.Setting, menu_options.setting),
-    setCallBack(MenuState.About, menu_options.about),
-    setCallBack(MenuState.Help, menu_options.help),
+    setCallBack(MainMenuState.Load, menu_options.loadGame),
+    setCallBack(MainMenuState.Setting, menu_options.setting),
+    setCallBack(MainMenuState.About, menu_options.about),
+    setCallBack(MainMenuState.Help, menu_options.help),
     menu_options.quitGame,
 };
 
-pub fn setCallBack(state: MenuState, action: ?ButtonCallBack) ButtonCallBack {
+pub fn setCallBack(state: MainMenuState, action: ButtonBehaviour) ButtonBehaviour {
     return struct {
         fn callback() void {
             current_state = state;
@@ -100,7 +109,7 @@ pub fn drawMainMenu() void {
     rl.drawRectangle(0, 0, side_panel_width, screen_height, rl.Color.sky_blue);
     rl.drawText(title, title_x_pos, title_y_pos, title_font_size, rl.Color.black);
 
-    if (current_state != MenuState.MainMenu) drawCurrentPanel();
+    if (current_state != MainMenuState.MainMenu) drawCurrentPanel();
 }
 
 pub fn updateMainMenu(menu: *ButtonManager) void {
@@ -112,7 +121,7 @@ pub fn drawCurrentPanel() void {
     if (current_action) |action| action();
 }
 
-fn drawPanel(state: MenuState) void {
+fn drawPanel(state: MainMenuState) void {
     const panel_title = @tagName(state);
 
     current_state = state;

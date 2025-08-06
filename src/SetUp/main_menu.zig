@@ -117,15 +117,10 @@ pub fn updateMainMenu(menu: *ButtonManager) void {
 }
 
 pub fn drawCurrentPanel() void {
-    drawPanel(current_state);
-    if (current_action) |action| action();
-}
-
-fn drawPanel(state: MainMenuState) void {
-    const panel_title = @tagName(state);
-
-    current_state = state;
+    const panel_title = @tagName(current_state);
 
     rl.drawRectangle(side_panel_width, 0, panel_screen_width, screen_height, rl.colorAlpha(rl.Color.black, 0.5));
     rl.drawText(panel_title, panel_x, 50, title_font_size, rl.Color.sky_blue);
+
+    if (current_action) |action| action();
 }

@@ -112,6 +112,11 @@ pub fn build(b: *std.Build) void {
     command_menu.addImport("game_state", game_state);
     command_menu.addImport("pause_menu", pause_menu);
 
+    game_state.addImport("main_menu", main_menu);
+    game_state.addImport("command_menu", command_menu);
+    game_state.addImport("pause_menu", pause_menu);
+    game_state.addImport("scene", scene);
+
     story.addImport("scene", scene);
 
     exe.linkLibrary(raylib_artifact);
@@ -122,8 +127,6 @@ pub fn build(b: *std.Build) void {
     exe.root_module.addImport("main_menu", main_menu);
     exe.root_module.addImport("story", story);
     exe.root_module.addImport("game_state", game_state);
-    exe.root_module.addImport("command_menu", command_menu);
-    exe.root_module.addImport("pause_menu", pause_menu);
 
     b.installArtifact(exe);
 

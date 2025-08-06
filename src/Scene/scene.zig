@@ -17,13 +17,13 @@ const menu_height = 100;
 
 const text_x_pos = offset_x + padding_x;
 
+// In the future, implement an ECS design
+// for sound effects, screen shake, transitions, etc.
+// Not all scenes have these features. So assigning them an ID would be efficient.
 pub const Scene = struct {
     character_name: [:0]const u8,
     lines: []const [:0]const u8,
     current_line: usize = 0,
-    // In the future, implement an ECS design
-    // for sound effects, screen shake, transitions, etc.
-    // Not all scenes have these features. So assigning them an ID would be efficient.
 };
 
 pub const SceneManager = struct {
@@ -80,7 +80,7 @@ pub const SceneManager = struct {
             .x = 0.0,
             .y = 0.0,
             .width = @floatFromInt(screen_width),
-            .height = @floatFromInt(screen_height - menu_height),
+            .height = @floatFromInt(screen_height - text_font_size),
         };
 
         const isClickable = rl.checkCollisionPointRec(mousePos, screenRect);

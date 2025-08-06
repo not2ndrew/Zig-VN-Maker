@@ -1,4 +1,10 @@
 const std = @import("std");
+const main_menu = @import("main_menu");
+const command_menu = @import("command_menu");
+const pause_menu = @import("pause_menu");
+const scene = @import("scene");
+
+const SceneManager = scene.SceneManager;
 
 pub var state_stack: std.ArrayList(GameState) = undefined;
 
@@ -26,4 +32,35 @@ pub fn popState() void {
     if (state_stack.items.len > 1) {
         _ = state_stack.pop().?;
     }
+}
+
+pub fn initMenus(allocator: std.mem.Allocator) void {
+    main_menu.init(allocator);
+    command_menu.init(allocator);
+    pause_menu.init(allocator);
+}
+
+pub fn deinitMenus() void {
+    main_menu.deinit();
+    command_menu.deinit();
+    pause_menu.deinit();
+}
+
+pub fn gameStateManager(scene_manager: *SceneManager) void {
+    switch (state_stack.getLast()) {
+            GameState.MainMenu => {
+                main_menu.drawMainMenu();
+                main_menu.updateMainMenu(&main_menu.main_menu);
+            },
+            GameState.Gameplay => {
+                scene_manager.renderScene();
+                scene_manager.updateScene();
+                command_menu.updateCommandMenu();
+            },
+            GameState.PauseMenu => {
+                pause_menu.drawPauseMenu();
+                pause_menu.updatePauseMenu();
+            },
+            GameState.None => {},
+        }
 }

@@ -1,8 +1,6 @@
 const std = @import("std");
 const rl = @import("raylib");
 
-pub const ButtonCallBack = *const fn () void;
-
 pub const ButtonManager = struct {
     visuals: std.ArrayList(ButtonVisual) = undefined,
     interactives: std.ArrayList(ButtonInteractive) = undefined,

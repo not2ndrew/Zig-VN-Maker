@@ -82,7 +82,7 @@ const behaviours = [labels.len]ButtonBehaviour{
     menu_options.previousScene,
     menu_options.auto,
     menu_options.skip,
-    menu_options.history,
+    setCallBack(PauseMenuState.History, menu_options.history),
     setCallBack(PauseMenuState.None, menu_options.menu),
 };
 

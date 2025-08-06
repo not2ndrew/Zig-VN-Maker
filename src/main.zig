@@ -5,8 +5,6 @@ const scene = @import("scene");
 const main_menu = @import("main_menu");
 const story = @import("story");
 const game_state = @import("game_state");
-const command_menu = @import("command_menu");
-const pause_menu = @import("pause_menu");
 
 const screen_width = c.SCREEN_WIDTH;
 const screen_height = c.SCREEN_HEIGHT;
@@ -25,14 +23,8 @@ pub fn main() !void {
     var scene_manager = scene.SceneManager{};
     scene_manager.scene_list = story.slicedScenes;
 
-    main_menu.init(allocator);
-    defer main_menu.deinit();
-
-    pause_menu.init(allocator);
-    defer pause_menu.deinit();
-
-    command_menu.init(allocator);
-    defer command_menu.deinit();
+    game_state.initMenus(allocator);
+    defer game_state.deinitMenus();
 
     rl.setTargetFPS(60);
     while (!rl.windowShouldClose() and !main_menu.should_quit) {
@@ -41,22 +33,6 @@ pub fn main() !void {
 
         rl.clearBackground(rl.Color.white);
 
-        // TODO: move this to the game_state file and create a function called game_state_manager.
-        switch (game_state.state_stack.getLast()) {
-            GameState.MainMenu => {
-                main_menu.drawMainMenu();
-                main_menu.updateMainMenu(&main_menu.main_menu);
-            },
-            GameState.Gameplay => {
-                scene_manager.renderScene();
-                scene_manager.updateScene();
-                command_menu.updateCommandMenu();
-            },
-            GameState.PauseMenu => {
-                pause_menu.drawPauseMenu();
-                pause_menu.updatePauseMenu();
-            },
-            GameState.None => {},
-        }
+        game_state.gameStateManager(&scene_manager);
     }
 }

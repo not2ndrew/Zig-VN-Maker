@@ -28,9 +28,9 @@ const title: [:0]const u8 = "Title";
 
 const ButtonManager = btn_components.ButtonManager;
 const ButtonVisual = btn_components.ButtonVisual;
+const ButtonInteractive = btn_components.ButtonInteractive;
 const ButtonBehaviour = btn_components.ButtonBehaviour;
 
-pub var main_menu = ButtonManager{};
 pub var should_quit = false;
 
 pub var current_state = MainMenuState.MainMenu;
@@ -73,6 +73,16 @@ const visuals = blk: {
     break :blk temp;
 };
 
+var interactives = blk: {
+    var temp: [labels.len]ButtonInteractive = undefined;
+
+    for (0..labels.len) |i| {
+        temp[i] = ButtonInteractive{ .hovered = false, .clicked = false };
+    }
+
+    break :blk temp;
+};
+
 // Start and quit do not need a MenuState. Start should transition to the Gameplay
 // and Quit should exit the program.
 const behaviours = [labels.len]ButtonBehaviour{
@@ -84,6 +94,16 @@ const behaviours = [labels.len]ButtonBehaviour{
     menu_options.quitGame,
 };
 
+const text_colours = blk: {
+    var temp: [labels.len]rl.Color = undefined;
+
+    for (0..labels.len) |i| {
+        temp[i] = rl.Color.black;
+    }
+
+    break :blk temp;
+};
+
 pub fn setCallBack(state: MainMenuState, action: ButtonBehaviour) ButtonBehaviour {
     return struct {
         fn callback() void {
@@ -91,17 +111,6 @@ pub fn setCallBack(state: MainMenuState, action: ButtonBehaviour) ButtonBehaviou
             current_action = action;
         }
     }.callback;
-}
-
-pub fn init(allocator: std.mem.Allocator) void {
-    main_menu.init(allocator);
-    game_state.init(allocator);
-    btn_system.setUpButtons(&main_menu, &visuals, &behaviours, rl.Color.black) catch unreachable;
-}
-
-pub fn deinit() void {
-    main_menu.deinit();
-    game_state.deinit();
 }
 
 pub fn drawMainMenu() void {
@@ -112,8 +121,8 @@ pub fn drawMainMenu() void {
     if (current_state != MainMenuState.MainMenu) drawCurrentPanel();
 }
 
-pub fn updateMainMenu(menu: *ButtonManager) void {
-    btn_system.updateFrame(menu);
+pub fn updateMainMenu() void {
+    btn_system.updateFrame(&visuals, &interactives, &behaviours, &text_colours);
 }
 
 pub fn drawCurrentPanel() void {

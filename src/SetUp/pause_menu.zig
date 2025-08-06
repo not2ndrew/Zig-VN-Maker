@@ -28,12 +28,11 @@ const title: [:0]const u8 = "Pause Menu";
 
 const ButtonManager = btn_components.ButtonManager;
 const ButtonVisual = btn_components.ButtonVisual;
+const ButtonInteractive = btn_components.ButtonInteractive;
 const ButtonBehaviour = btn_components.ButtonBehaviour;
 
 pub var current_substate = PauseMenuState.None;
 pub var current_action: ?*const fn() void = null;
-
-pub var pause_menu = ButtonManager{};
 
 pub const PauseMenuState = enum {
     Save,
@@ -69,6 +68,16 @@ const visuals = blk: {
     break :blk arr;
 };
 
+var interactives = blk: {
+    var temp: [labels.len]ButtonInteractive = undefined;
+
+    for (0..labels.len) |i| {
+        temp[i] = ButtonInteractive{ .hovered = false, .clicked = false };
+    }
+
+    break :blk temp;
+};
+
 const behaviours = [labels.len]ButtonBehaviour{
     setCallBack(PauseMenuState.Save, menu_options.saveGame),
     setCallBack(PauseMenuState.Load, menu_options.loadGame),
@@ -78,14 +87,15 @@ const behaviours = [labels.len]ButtonBehaviour{
     menu_options.menu, // TODO: I'm not quite sure what I should do with this.
 };
 
-pub fn init(allocator: std.mem.Allocator) void {
-    pause_menu.init(allocator);
-    btn_system.setUpButtons(&pause_menu, &visuals, &behaviours, rl.Color.black) catch unreachable;
-}
+const text_colours = blk: {
+    var temp: [labels.len]rl.Color = undefined;
 
-pub fn deinit() void {
-    pause_menu.deinit();
-}
+    for (0..labels.len) |i| {
+        temp[i] = rl.Color.white;
+    }
+
+    break :blk temp;
+};
 
 pub fn setCallBack(state: PauseMenuState, action: ButtonBehaviour) ButtonBehaviour {
     return struct {
@@ -101,7 +111,7 @@ pub fn setCallBack(state: PauseMenuState, action: ButtonBehaviour) ButtonBehavio
 }
 
 pub fn updatePauseMenu() void {
-    btn_system.updateFrame(&pause_menu);
+    btn_system.updateFrame(&visuals, &interactives, &behaviours, &text_colours);
 }
 
 pub fn drawPauseMenu() void {
@@ -116,13 +126,10 @@ pub fn drawPauseMenu() void {
 }
 
 pub fn drawCurrentPanel() void {
-    drawPanel(current_substate);
-    if (current_action) |action| action();
-}
-
-fn drawPanel(state: PauseMenuState) void {
-    const panel_title = @tagName(state);
+    const panel_title = @tagName(current_substate);
 
     rl.drawRectangle(side_panel_width, 0, panel_screen_width, screen_height, rl.colorAlpha(rl.Color.black, 0.5));
     rl.drawText(panel_title, panel_x, 50, title_font_size, rl.Color.sky_blue);
+
+    if (current_action) |action| action();
 }

@@ -8,33 +8,33 @@ const ButtonVisual = btn_components.ButtonVisual;
 const ButtonInteractive = btn_components.ButtonInteractive;
 const ButtonBehaviour = btn_components.ButtonBehaviour;
 
-pub fn updateFrame(self: *ButtonManager) void {
-    renderButton(&self.visuals, &self.text_colours);
-    updateButtonInteraction(&self.visuals, &self.interactives);
-    updateButtonBehaviour(&self.interactives, &self.behaviours);
+pub fn updateFrame(visuals: []const ButtonVisual, interactives: []ButtonInteractive, behaviours: []const ButtonBehaviour, text_colours: []const rl.Color) void {
+    renderButton(visuals, text_colours);
+    updateButtonInteraction(visuals, interactives);
+    updateButtonBehaviour(interactives, behaviours);
 }
 
-pub fn renderButton(visuals: *std.ArrayList(ButtonVisual), text_colours: *std.ArrayList(rl.Color)) void {
-    for (visuals.items, text_colours.items) |visual, text_colour| {
+pub fn renderButton(visuals: []const ButtonVisual, text_colours: []const rl.Color) void {
+    for (visuals, text_colours) |visual, text_colour| {
         drawButton(visual, text_colour);
     }
 }
 
-pub fn updateButtonInteraction(visuals: *std.ArrayList(ButtonVisual), interactives: *std.ArrayList(ButtonInteractive)) void {
+pub fn updateButtonInteraction(visuals: []const ButtonVisual, interactives: []ButtonInteractive) void {
     const mousePos = rl.getMousePosition();
-    const num_of_btns = visuals.items.len;
+    const num_of_btns = visuals.len;
 
     var any_hovered = false;
 
     for (0..num_of_btns) |i| {
-        const visual = visuals.items[i];
+        const visual = visuals[i];
         const rect = calcRect(visual);
 
         const is_hovered = rl.checkCollisionPointRec(mousePos, rect);
         const clicked = is_hovered and rl.isMouseButtonReleased(rl.MouseButton.left);
 
-        interactives.items[i].hovered = is_hovered;
-        interactives.items[i].clicked = clicked;
+        interactives[i].hovered = is_hovered;
+        interactives[i].clicked = clicked;
 
         if (is_hovered) any_hovered = true;
     }
@@ -46,13 +46,10 @@ pub fn updateButtonInteraction(visuals: *std.ArrayList(ButtonVisual), interactiv
     }
 }
 
-pub fn updateButtonBehaviour(interactives: *std.ArrayList(ButtonInteractive), behaviours: *std.ArrayList(ButtonBehaviour)) void {
-    const num_of_btns = interactives.items.len;
-    for (0..num_of_btns) |i| {
-        if (interactives.items[i].clicked) {
-            if (behaviours.items[i]) |cb| {
-                cb();
-            }
+pub fn updateButtonBehaviour(interactives: []ButtonInteractive, behaviours: []const ButtonBehaviour) void {
+    for (interactives, behaviours) |interactive, behaviour| {
+        if (interactive.clicked) {
+            behaviour();
         }
     }
 }
@@ -78,24 +75,6 @@ pub fn drawButton(visual: ButtonVisual, text_colour: rl.Color) void {
     const text_y_pos = rect_y + @divFloor(rect_height - text_height, 2);
 
     rl.drawText(visual.label, text_x_pos, text_y_pos, visual.font_size, text_colour);
-}
-
-pub fn setUpButtons(btnManager: *ButtonManager, visuals: []const ButtonVisual, behaviours: []const ButtonBehaviour, text_colour: rl.Color) !void {
-    for (visuals, behaviours) |visual, behaviour| {
-        try createButton(btnManager, visual, behaviour, text_colour);
-    }
-}
-
-pub fn createButton(self: *ButtonManager, visual: ButtonVisual, behaviour: ButtonBehaviour, text_colour: rl.Color) !void {
-    const interactive = ButtonInteractive{
-        .hovered = false,
-        .clicked = false,
-    };
-
-    try self.visuals.append(visual);
-    try self.interactives.append(interactive);
-    try self.behaviours.append(behaviour);
-    try self.text_colours.append(text_colour);
 }
 
 fn calcRect(visual: ButtonVisual) rl.Rectangle {

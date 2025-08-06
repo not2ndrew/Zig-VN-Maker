@@ -1,4 +1,9 @@
 const rl = @import("raylib");
+const btn_system = @import("button_system");
+const btn_components = @import("button_components");
+
+const ButtonVisual = btn_components.ButtonVisual;
+const ButtonInteractive = btn_components.ButtonInteractive;
 
 pub const TextBlock = struct {
     lines: []const [:0]const u8,
@@ -25,3 +30,10 @@ pub fn drawTextBlock(block: *const TextBlock) void {
     rl.drawText(block.title, block.posX, block.posY, block.fontSizeTitle, block.titleColor);
     drawVerticalTextLines(block.lines, block.posX, block.posY + block.offsetY, block.offsetY, block.fontSizeText, block.textColor);
 }
+
+// TODO: rename the file from drawText.zig -> inputComponent.zig
+// Or, ignore the drawText.zig and create a new file inputComponent.zig
+
+// pub fn drawSliderWithKnob(slider: rl.Rectangle, knob_visual: ButtonVisual, knob_interactive: ButtonInteractive) void {
+//     rl.drawRectangleRec(slider, rl.Color.white);
+// }

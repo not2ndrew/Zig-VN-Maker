@@ -63,13 +63,14 @@ pub const SceneManager = struct {
     fn drawDialogue(scene: *const Scene) void {
         const dialogue_background = rl.Color.alpha(rl.Color.black, 0.5);
         const dialogue_height = @divFloor(screen_height, 4);
+        const dialogue_x_pos = screen_height - dialogue_height;
+        const dialogue_y_pos = dialogue_x_pos + text_y_pos;
 
-        rl.drawRectangle(0, screen_height - dialogue_height, screen_width, dialogue_height, dialogue_background);
+        const name_y_pos: i32 = dialogue_x_pos + name_y_padding;
 
-        const name_y_pos: i32 = screen_height - dialogue_height + name_y_padding;
-        rl.drawText(scene.character_name, text_x_pos, name_y_pos, title_font_size, rl.Color.white);
+        rl.drawRectangle(0, dialogue_x_pos, screen_width, dialogue_height, dialogue_background);
 
-        const dialogue_y_pos: i32 = screen_height - dialogue_height + text_y_pos;
+        rl.drawText(scene.character_name, text_x_pos, name_y_pos, title_font_size, rl.Color.white); 
         rl.drawText(scene.lines[scene.current_line], text_x_pos, dialogue_y_pos, text_font_size, rl.Color.white);
     }
 

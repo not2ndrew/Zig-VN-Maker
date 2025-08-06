@@ -23,8 +23,8 @@ pub fn main() !void {
     var scene_manager = scene.SceneManager{};
     scene_manager.scene_list = story.slicedScenes;
 
-    game_state.initMenus(allocator);
-    defer game_state.deinitMenus();
+    game_state.init(allocator);
+    defer game_state.deinit();
 
     rl.setTargetFPS(60);
     while (!rl.windowShouldClose() and !main_menu.should_quit) {

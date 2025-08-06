@@ -34,23 +34,11 @@ pub fn popState() void {
     }
 }
 
-pub fn initMenus(allocator: std.mem.Allocator) void {
-    main_menu.init(allocator);
-    command_menu.init(allocator);
-    pause_menu.init(allocator);
-}
-
-pub fn deinitMenus() void {
-    main_menu.deinit();
-    command_menu.deinit();
-    pause_menu.deinit();
-}
-
 pub fn gameStateManager(scene_manager: *SceneManager) void {
     switch (state_stack.getLast()) {
             GameState.MainMenu => {
                 main_menu.drawMainMenu();
-                main_menu.updateMainMenu(&main_menu.main_menu);
+                main_menu.updateMainMenu();
             },
             GameState.Gameplay => {
                 scene_manager.renderScene();
@@ -64,3 +52,8 @@ pub fn gameStateManager(scene_manager: *SceneManager) void {
             GameState.None => {},
         }
 }
+
+// pub fn gameStateMan() void {
+//     main_menu.drawMainMenu();
+//     main_menu.updateMainMenu();
+// }

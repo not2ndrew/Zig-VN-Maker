@@ -25,12 +25,11 @@ const title_y_pos = 200;
 
 const ButtonManager = btn_components.ButtonManager;
 const ButtonVisual = btn_components.ButtonVisual;
+const ButtonInteractive = btn_components.ButtonInteractive;
 const ButtonBehaviour = btn_components.ButtonBehaviour;
 const PauseMenuState = pause_menu.PauseMenuState;
 
 const setCallBack = pause_menu.setCallBack;
-
-pub var command_menu = ButtonManager{};
 
 const labels = [_][:0]const u8{
     "Save",
@@ -42,30 +41,29 @@ const labels = [_][:0]const u8{
     "Pause Menu",
 };
 
-// x_positions is calculated at run-time due to extern function measureText().
-fn calculateXPositions() [labels.len]i32 {
-    const text_x_spacing = 50;
+// TODO: Find a way to create evenly-spaced x positions with words of different length.
+// Cannot use raylib function measureText() because it is an extern function
+// that is run-time instead of comp-time.
+const x_positions = blk: {
     var arr: [labels.len]i32 = undefined;
-    var x_position: i32 = 600;
+    var x_position: i32 = 500;
 
     for (0..labels.len) |i| {
         arr[i] = x_position;
-        x_position += rl.measureText(labels[i], text_font_size) + text_x_spacing;
+        x_position += @as(i32, @intCast(labels[i].len * text_font_size));
     }
 
-    return arr;
-}
+    break :blk arr;
+};
 
-fn generateVisuals() [labels.len]ButtonVisual {
-    const command_menu_y_pos = screen_height - text_font_size - text_y_padding;
-    const x_arr: [labels.len]i32 = calculateXPositions();
-
-    var arr: [labels.len]ButtonVisual = undefined;
+const visuals = blk: {
+    const command_menu_y_pos: i32 = 950;
+    var temp: [labels.len]ButtonVisual = undefined;
 
     for (0..labels.len) |i| {
-        arr[i] = ButtonVisual{
+        temp[i] = ButtonVisual{
             .label = labels[i],
-            .x_position = x_arr[i],
+            .x_position = x_positions[i],
             .y_position = command_menu_y_pos,
             .x_padding = text_x_padding,
             .y_padding = text_y_padding,
@@ -73,8 +71,18 @@ fn generateVisuals() [labels.len]ButtonVisual {
         };
     }
 
-    return arr;
-}
+    break :blk temp;
+};
+
+var interactives = blk: {
+    var temp: [labels.len]ButtonInteractive = undefined;
+
+    for (0..labels.len) |i| {
+        temp[i] = ButtonInteractive{ .hovered = false, .clicked = false };
+    }
+
+    break :blk temp;
+};
 
 const behaviours = [labels.len]ButtonBehaviour{
     setCallBack(PauseMenuState.Save, menu_options.saveGame),
@@ -86,17 +94,16 @@ const behaviours = [labels.len]ButtonBehaviour{
     setCallBack(PauseMenuState.None, menu_options.menu),
 };
 
-pub fn init(allocator: std.mem.Allocator) void {
-    command_menu.init(allocator);
+const text_colours = blk: {
+    var temp: [labels.len]rl.Color = undefined;
 
-    const visuals = generateVisuals();
-    btn_system.setUpButtons(&command_menu, &visuals, &behaviours, rl.Color.white) catch unreachable;
-}
+    for (0..labels.len) |i| {
+        temp[i] = rl.Color.white;
+    }
 
-pub fn deinit() void {
-    command_menu.deinit();
-}
+    break :blk temp;
+};
 
 pub fn updateCommandMenu() void {
-    btn_system.updateFrame(&command_menu);
+    btn_system.updateFrame(&visuals, &interactives, &behaviours, &text_colours);
 }

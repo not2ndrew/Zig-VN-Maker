@@ -1,20 +1,22 @@
 const std = @import("std");
 const rl = @import("raylib");
 const c = @import("constants");
-const main_menu = @import("main_menu");
+const main_menu = @import("menus").MainMenu;
 const game_state = @import("game_state");
 
 const screen_width = c.SCREEN_WIDTH;
 const screen_height = c.SCREEN_HEIGHT;
+
 const padding_x = c.PADDING_X;
 const padding_y = c.PADDING_Y;
 const name_y_padding = 30;
+
 const title_font_size = c.TITLE_FONT_SIZE;
 const text_font_size = c.TEXT_FONT_SIZE;
+
 const text_y_pos = c.TEXT_Y_POS;
 const offset_x = 300;
 const menu_height = 100;
-
 const text_x_pos = offset_x + padding_x;
 
 // In the future, implement an ECS design

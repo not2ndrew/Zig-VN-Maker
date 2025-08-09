@@ -1,9 +1,8 @@
-const rl = @import("raylib");
 const std = @import("std");
+const rl = @import("raylib");
 const c = @import("constants");
 const scene = @import("scene");
-const main_menu = @import("main_menu");
-const story = @import("story");
+const story = @import("SetUp/story.zig");
 const game_state = @import("game_state");
 
 const screen_width = c.SCREEN_WIDTH;
@@ -27,7 +26,7 @@ pub fn main() !void {
     defer game_state.deinit();
 
     rl.setTargetFPS(60);
-    while (!rl.windowShouldClose() and !main_menu.should_quit) {
+    while (!rl.windowShouldClose() and !game_state.should_quit) {
         rl.beginDrawing();
         defer rl.endDrawing();
 

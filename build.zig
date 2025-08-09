@@ -15,40 +15,16 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/SetUp/constants.zig"),
     });
 
-    const button_components = b.createModule(.{
-        .root_source_file = b.path("src/Button/button_components.zig"),
+    const menus = b.createModule(.{
+        .root_source_file = b.path("src/Menu/menus.zig"),
     });
 
-    const button_system = b.createModule(.{
-        .root_source_file = b.path("src/Button/button_system.zig"),
-    });
-
-    const menu_options = b.createModule(.{
-        .root_source_file = b.path("src/Menu/menu_options.zig"),
-    });
-
-    const drawText = b.createModule(.{
-        .root_source_file = b.path("src/UI/drawText.zig"),
+    const buttons = b.createModule(.{
+        .root_source_file = b.path("src/Button/buttons.zig"),
     });
 
     const scene = b.createModule(.{
         .root_source_file = b.path("src/Scene/scene.zig"),
-    });
-
-    const main_menu = b.createModule(.{
-        .root_source_file = b.path("src/SetUp/main_menu.zig"),
-    });
-
-    const pause_menu = b.createModule(.{
-        .root_source_file = b.path("src/SetUp/pause_menu.zig"),
-    });
-
-    const command_menu = b.createModule(.{
-        .root_source_file = b.path("src/SetUp/command_menu.zig"),
-    });
-
-    const story = b.createModule(.{
-        .root_source_file = b.path("src/SetUp/story.zig"),
     });
 
     const game_state = b.createModule(.{
@@ -70,64 +46,32 @@ pub fn build(b: *std.Build) void {
         .root_module = exe_mod,
     });
 
-    // Add imports
+    menus.addImport("raylib", raylib);
+    menus.addImport("constants", constants);
+    menus.addImport("buttons", buttons);
+    menus.addImport("game_state", game_state);
 
-    drawText.addImport("raylib", raylib);
+    buttons.addImport("raylib", raylib);
 
     scene.addImport("raylib", raylib);
     scene.addImport("constants", constants);
-    scene.addImport("main_menu", main_menu);
-    scene.addImport("menu_options", menu_options);
+    scene.addImport("menus", menus);
+    scene.addImport("buttons", buttons);
+    scene.addImport("constants", constants);
     scene.addImport("game_state", game_state);
-    
-    button_components.addImport("raylib", raylib);
 
-    button_system.addImport("raylib", raylib);
-    button_system.addImport("button_components", button_components);
-
-    menu_options.addImport("raylib", raylib);
-    menu_options.addImport("constants", constants);
-    menu_options.addImport("main_menu", main_menu);
-    menu_options.addImport("game_state", game_state);
-
-    main_menu.addImport("raylib", raylib);
-    main_menu.addImport("constants", constants);
-    main_menu.addImport("button_system", button_system);
-    main_menu.addImport("button_components", button_components);
-    main_menu.addImport("menu_options", menu_options);
-    main_menu.addImport("game_state", game_state);
-
-    pause_menu.addImport("raylib", raylib);
-    pause_menu.addImport("constants", constants);
-    pause_menu.addImport("button_system", button_system);
-    pause_menu.addImport("button_components", button_components);
-    pause_menu.addImport("menu_options", menu_options);
-    pause_menu.addImport("game_state", game_state);
-
-    command_menu.addImport("raylib", raylib);
-    command_menu.addImport("constants", constants);
-    command_menu.addImport("button_system", button_system);
-    command_menu.addImport("button_components", button_components);
-    command_menu.addImport("menu_options", menu_options);
-    command_menu.addImport("game_state", game_state);
-    command_menu.addImport("pause_menu", pause_menu);
-
-    game_state.addImport("main_menu", main_menu);
-    game_state.addImport("command_menu", command_menu);
-    game_state.addImport("pause_menu", pause_menu);
+    game_state.addImport("menus", menus);
     game_state.addImport("scene", scene);
-
-    story.addImport("scene", scene);
 
     exe.linkLibrary(raylib_artifact);
     exe.root_module.addImport("raylib", raylib);
     exe.root_module.addImport("raygui", raygui);
     exe.root_module.addImport("constants", constants);
+    exe.root_module.addImport("buttons", buttons);
+    exe.root_module.addImport("menus", menus);
     exe.root_module.addImport("scene", scene);
-    exe.root_module.addImport("main_menu", main_menu);
-    exe.root_module.addImport("story", story);
     exe.root_module.addImport("game_state", game_state);
-
+    
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);

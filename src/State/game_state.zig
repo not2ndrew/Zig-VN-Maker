@@ -1,12 +1,14 @@
 const std = @import("std");
-const main_menu = @import("main_menu");
-const command_menu = @import("command_menu");
-const pause_menu = @import("pause_menu");
+const main_menu = @import("menus").MainMenu;
+const command_menu = @import("menus").CommandMenu;
+const pause_menu = @import("menus").PauseMenu;
 const scene = @import("scene");
 
 const SceneManager = scene.SceneManager;
 
 pub var state_stack: std.ArrayList(GameState) = undefined;
+
+pub var should_quit = false;
 
 pub const GameState = enum {
     None,

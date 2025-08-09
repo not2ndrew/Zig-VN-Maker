@@ -1,6 +1,6 @@
 const std = @import("std");
 const rl = @import("raylib");
-const btn_components = @import("button_components");
+const btn_components = @import("button_components.zig");
 
 const ButtonManager = btn_components.ButtonManager;
 const ButtonCallBack = btn_components.ButtonCallBack;
